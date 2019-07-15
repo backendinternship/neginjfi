@@ -13,40 +13,22 @@ import java.util.Scanner;
 
 public class ThreadClass extends Thread {
 
-    int[] views = new int[30];
-
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
         File output_file = new File("/Users/Nefario/RSS/src/rss");
         while (true) {
-
-
-            String s = getString(scanner);
-            if (s.equals("exit"))
-                return;
+            String s = scanner.nextLine();
             if (s.matches("^[0-9]+")) {
                 int number = Integer.parseInt(s);
-                doo( number, output_file);
+                Document doc = getDoc(output_file);
+                NodeList nList = doc.getElementsByTagName("item");
+                Node nNode = nList.item(number);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    add(doc, (Element) nNode, output_file);
+                }
             }
         }
-    }
-
-    private synchronized void doo( int number, File o) {
-        Document doc = getDoc(o);
-        NodeList nList = getNodeList(doc);
-        Node nNode = nList.item(number);
-        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-            add(doc, (Element) nNode, number, o);
-        }
-    }
-
-    private synchronized String getString(Scanner scanner) {
-        return scanner.nextLine();
-    }
-
-    private synchronized NodeList getNodeList(Document doc) {
-        return doc.getElementsByTagName("item");
     }
 
     private synchronized Document getDoc(File output_file) {
@@ -65,7 +47,7 @@ public class ThreadClass extends Thread {
         return doc;
     }
 
-    private synchronized void add(Document doc, Element nNode, int number, File o) {
+    private synchronized void add(Document doc, Element nNode, File o) {
         Element eElement = nNode;
         int views = Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent());
         views++;
