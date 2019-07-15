@@ -27,49 +27,14 @@ public class ReadRSS {
         if (output_file.length() == 0) {
             writeContents(output_file, content);
         }
-        Scanner scanner = new Scanner(System.in);
         System.out.println("enter number");
-        Thread thread = new Thread(() -> {
+        ThreadClass threadClass = new ThreadClass();
+        threadClass.start();
 
-            while (true) {
-                Document doc = null;
-                try {
-                    doc = addElement(output_file);
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (TransformerException e) {
-                    e.printStackTrace();
-                }
-                NodeList nList = doc.getElementsByTagName("item");
-                String s = scanner.nextLine();
-                if (s.equals("exit"))
-                    return;
-                if (s.matches("^[0-9]+") && Integer.parseInt(s) < nList.getLength()) {
-                    int number = Integer.parseInt(s);
-                    Node nNode = nList.item(number);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        synchronized (doc) {
-                            int views = Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent());
-                            views++;
-                            eElement.getElementsByTagName("newNode").item(0).setTextContent(String.valueOf(views));
-                            saveInFile(doc);
-
-                            System.out.println(views + " views" + "   NEWS : " + eElement.getElementsByTagName("description").item(0).getTextContent());
-                        }
-                    }
-                }
-            }
-        });
-        thread.start();
 
     }
 
-    private static void saveInFile(Document doc) {
+  /*  private static void saveInFile(Document doc) {
         Transformer transformer = null;
         try {
             transformer = TransformerFactory.newInstance().newTransformer();
@@ -103,7 +68,7 @@ public class ReadRSS {
             transformer.transform(input, output);
         }
         return doc;
-    }
+    }*/
 
     private static void writeContents(File file, String content) {
         BufferedWriter out = null;
