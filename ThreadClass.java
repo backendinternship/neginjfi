@@ -18,7 +18,7 @@ public class ThreadClass extends Thread {
             if (s.matches("^[0-9]+")) {
                 try {
                     int number = Integer.parseInt(s);
-                    printNews(number);
+                    printNews(number, statement);
                     int vi = JDBCExample.printRecord(statement, number);
                     JDBCExample.update(statement, number, vi);
                 } catch (SQLException e) {
@@ -28,11 +28,13 @@ public class ThreadClass extends Thread {
         }
     }
 
-    private void printNews(int number) throws SQLException {
+    public static void printNews(int number, Statement statement) throws SQLException {
         ResultSet rs = statement.executeQuery("SELECT * FROM rssDB1 LIMIT 1 OFFSET " + number);
         while (rs.next()) {
             System.out.println("TITLE :  " + rs.getString("title"));
             System.out.println("NEWS  :  " + rs.getString("news"));
         }
     }
+
+
 }

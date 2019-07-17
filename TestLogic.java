@@ -9,8 +9,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 
 public class TestLogic {
@@ -90,8 +89,6 @@ public class TestLogic {
                     assertEquals(view, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
                 }
             }
-
-
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -99,4 +96,28 @@ public class TestLogic {
         }
 
     }
+
+    @Test
+    public void printTest() throws Exception {
+        PrintStream oldOut = System.out;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(baos));
+        Connection conn;
+        Statement stmt = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
+            stmt = conn.createStatement();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ThreadClass.printNews(1,stmt);
+        System.setOut(oldOut);
+        String output = new String(baos.toByteArray());
+        assertTrue(output.contains("TITLE"));
+    }
+
+
 }
