@@ -80,14 +80,14 @@ public class JDBCExample {
         stmt.executeUpdate(query1);
     }
 
-    public static int printRecord(ResultSet rsr, ResultSet rsr2) throws SQLException {
-
-        while (rsr2.next()) {
-            int view = rsr2.getInt("views");
+    public static int printRecord(Statement statement, int number) throws SQLException {
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM rssDBSE2 LIMIT 1 OFFSET " + number);
+        while (resultSet.next()) {
+            int view = resultSet.getInt("views");
             view++;
             System.out.println("views  " + view);
             return view;
         }
-        return 1;
+        return 0;
     }
 }
