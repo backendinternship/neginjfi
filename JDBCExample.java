@@ -16,7 +16,8 @@ public class JDBCExample {
     static final String USER = "root";
     static final String PASS = "qwer1234";
     static final String CLASS_NAME = "com.mysql.jdbc.Driver";
-    static final String SQL = "create table rssDBS ( " + "   id INT  , news VARCHAR(7000) , views INT ) ";
+    static final String SQL1 = "create table rssDBSE1 ( " + "   id INT  , news VARCHAR(7000)) ";
+    static final String SQL2 = "create table rssDBSE2 ( " + "   id INT  , views INT) ";
     static final String ITEM = "item";
     static final String FILE_NAME = "/Users/Nefario/RSS/src/rss";
 
@@ -28,7 +29,8 @@ public class JDBCExample {
             Class.forName(CLASS_NAME);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
-            //stmt.executeUpdate(SQL); // table should be created only once
+            stmt.executeUpdate(SQL1); // table should be created only once
+            stmt.executeUpdate(SQL2);
             Document doc = getDocument(output_file);
             InsertData(conn, doc);
             ThreadClass threadClass = new ThreadClass(stmt);
@@ -40,14 +42,17 @@ public class JDBCExample {
 
     private static void InsertData(Connection conn, Document doc) throws SQLException {
         NodeList nList = doc.getElementsByTagName(ITEM);
-        PreparedStatement statement = conn.prepareStatement("insert into rssDBS(id,news,views) VALUES (?,?,?)");
+        PreparedStatement statement = conn.prepareStatement("insert into rssDBSE1(id,news) VALUES (?,?)");
+        PreparedStatement statement2 = conn.prepareStatement("insert into rssDBSE2(id,views) VALUES (?,?)");
         for (int i = 0; i < nList.getLength(); i++) {
             Node nNode = nList.item(i);
             Element eElement = (Element) nNode;
             statement.setInt(1, i);
+            statement2.setInt(1, i);
             statement.setString(2, eElement.getElementsByTagName("description").item(0).getTextContent());
-            statement.setInt(3, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
+            statement2.setInt(2, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
             statement.execute();
+            statement2.execute();
         }
     }
 
@@ -71,7 +76,7 @@ public class JDBCExample {
     }
 
     public static void update(Statement stmt, int number, int view) throws SQLException {
-        String query1 = "update rssDBS set views=" + (view) + " " + "where id in(" + number + ")";
+        String query1 = "update rssDBSE1 set views=" + (view) + " " + "where id in(" + number + ")";
         stmt.executeUpdate(query1);
     }
 

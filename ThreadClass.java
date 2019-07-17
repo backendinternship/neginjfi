@@ -18,7 +18,7 @@ public class ThreadClass extends Thread {
             if (s.matches("^[0-9]+")) {
                 try {
                     int number = Integer.parseInt(s);
-                    ResultSet rs = statement.executeQuery("SELECT * FROM rssDBS LIMIT 1 OFFSET " + number);
+                    ResultSet rs = statement.executeQuery("SELECT * FROM rssDBSE1 LIMIT 1 OFFSET " + number);
                     int vi = JDBCExample.printRecord(rs);
                     JDBCExample.update(statement, number, vi);
                 } catch (SQLException e) {
