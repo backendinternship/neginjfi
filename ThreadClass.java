@@ -29,10 +29,10 @@ public class ThreadClass extends Thread {
     }
 
     private void printNews(int number) throws SQLException {
-        ResultSet rs = statement.executeQuery("SELECT * FROM rssDBSE1 LIMIT 1 OFFSET " + number);
+        ResultSet rs = statement.executeQuery("SELECT * FROM rssDB1 LIMIT 1 OFFSET " + number);
         while (rs.next()) {
-            String news = rs.getString("news");
-            System.out.println(news);
+            System.out.println("TITLE :  "+rs.getString("title"));
+            System.out.println("NEWS  :  "+rs.getString("news"));
         }
     }
 }
