@@ -57,7 +57,7 @@ public class JDBCExample {
         }
     }
 
-    private static Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+    public static Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(output_file);
