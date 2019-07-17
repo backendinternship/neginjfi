@@ -83,7 +83,7 @@ public class TestLogic {
             NodeList nList = doc.getElementsByTagName("item");
             for (int i = 0; i < nList.getLength(); i++) {
                 ResultSet resultSet = stmt.executeQuery("SELECT * FROM testTable2 LIMIT 1 OFFSET " + i);
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     int view = resultSet.getInt("views");
                     Node nNode = nList.item(i);
                     Element eElement = (Element) nNode;
@@ -114,7 +114,7 @@ public class TestLogic {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        for (int i = 0; i <nodeListSize ; i++) {
+        for (int i = 0; i < nodeListSize; i++) {
             ThreadClass.printNews(i, stmt);
             System.setOut(oldOut);
             String output = new String(baos.toByteArray());
