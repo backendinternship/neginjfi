@@ -16,6 +16,7 @@ public class TestLogic {
 
     static final String USER = "root";
     static final String PASS = "qwer1234";
+    static final int nodeListSize = 30;
 
     @Test
     public void testDocumentContent() throws ParserConfigurationException, TransformerException, SAXException, IOException {
@@ -113,10 +114,13 @@ public class TestLogic {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ThreadClass.printNews(1, stmt);
-        System.setOut(oldOut);
-        String output = new String(baos.toByteArray());
-        assertTrue(output.contains("TITLE"));
+        for (int i = 0; i <nodeListSize ; i++) {
+            ThreadClass.printNews(i, stmt);
+            System.setOut(oldOut);
+            String output = new String(baos.toByteArray());
+            assertTrue(output.contains("TITLE"));
+
+        }
     }
 
     @Test
@@ -127,14 +131,14 @@ public class TestLogic {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
             stmt = conn.createStatement();
-            int view = JDBCExample.printRecord(stmt, 1);
-            JDBCExample.update(stmt, 1, view);
-            ResultSet resultSet = stmt.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + 1);
-            if (resultSet.next()) {
-                int view2 = resultSet.getInt("views");
-                assertEquals(view2, view);
-                System.out.println(view);
-                System.out.println(view2);
+            for (int i = 0; i < nodeListSize; i++) {
+                int view = JDBCExample.printRecord(stmt, i);
+                JDBCExample.update(stmt, i, view);
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + i);
+                if (resultSet.next()) {
+                    int view2 = resultSet.getInt("views");
+                    assertEquals(view2, view);
+                }
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
