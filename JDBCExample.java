@@ -29,8 +29,8 @@ public class JDBCExample {
             Class.forName(CLASS_NAME);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
-            stmt.executeUpdate(SQL1); // table should be created only once
-            stmt.executeUpdate(SQL2);
+            //stmt.executeUpdate(SQL1); // table should be created only once
+            //stmt.executeUpdate(SQL2);
             Document doc = getDocument(output_file);
             InsertData(conn, doc);
             ThreadClass threadClass = new ThreadClass(stmt);
@@ -76,16 +76,15 @@ public class JDBCExample {
     }
 
     public static void update(Statement stmt, int number, int view) throws SQLException {
-        String query1 = "update rssDBSE1 set views=" + (view) + " " + "where id in(" + number + ")";
+        String query1 = "update rssDBSE2 set views=" + (view) + " " + "where id in(" + number + ")";
         stmt.executeUpdate(query1);
     }
 
-    public static int printRecord(ResultSet rsr) throws SQLException {
-        while (rsr.next()) {
-            String news = rsr.getString("news");
-            int view = rsr.getInt("views");
+    public static int printRecord(ResultSet rsr, ResultSet rsr2) throws SQLException {
+
+        while (rsr2.next()) {
+            int view = rsr2.getInt("views");
             view++;
-            System.out.println(news);
             System.out.println("views  " + view);
             return view;
         }
