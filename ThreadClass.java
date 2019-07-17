@@ -31,8 +31,8 @@ public class ThreadClass extends Thread {
     private void printNews(int number) throws SQLException {
         ResultSet rs = statement.executeQuery("SELECT * FROM rssDB1 LIMIT 1 OFFSET " + number);
         while (rs.next()) {
-            System.out.println("TITLE :  "+rs.getString("title"));
-            System.out.println("NEWS  :  "+rs.getString("news"));
+            System.out.println("TITLE :  " + rs.getString("title"));
+            System.out.println("NEWS  :  " + rs.getString("news"));
         }
     }
 }

@@ -1,4 +1,3 @@
-import static java.util.jar.Pack200.Packer.PASS;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -62,5 +61,42 @@ public class TestLogic {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void insertDataToTableTest() throws ParserConfigurationException, TransformerException, SAXException, IOException {
+        String SQL1 = "create table testTable1 ( " + "   id INT  , news VARCHAR(7000) , title VARCHAR (7000)) ";
+        String SQL2 = "create table testTable2 ( " + "   id INT  , views INT) ";
+        String query1 = "insert into testTable1(id,news,title) VALUES (?,?,?)";
+        String query2 = "insert into testTable2(id,views) VALUES (?,?)";
+        File output_file = new File("/Users/Nefario/RSS/src/rss");
+        Connection conn;
+        Statement stmt;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
+            stmt = conn.createStatement();
+            stmt.executeUpdate(SQL1); // table should be created only once
+            stmt.executeUpdate(SQL2);
+            Document doc = JDBCExample.getDocument(output_file);
+            JDBCExample.InsertData(conn, doc, query1, query2);
+            NodeList nList = doc.getElementsByTagName("item");
+            for (int i = 0; i < nList.getLength(); i++) {
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM testTable2 LIMIT 1 OFFSET " + i);
+                while (resultSet.next()) {
+                    int view = resultSet.getInt("views");
+                    Node nNode = nList.item(i);
+                    Element eElement = (Element) nNode;
+                    assertEquals(view, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
+                }
+            }
+
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }

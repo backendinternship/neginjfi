@@ -20,6 +20,8 @@ public class JDBCExample {
     static final String SQL2 = "create table rssDB2 ( " + "   id INT  , views INT) ";
     static final String ITEM = "item";
     static final String FILE_NAME = "/Users/Nefario/RSS/src/rss";
+    static final String query1 = "insert into rssDB1(id,news,title) VALUES (?,?,?)";
+    static final String query2 = "insert into rssDB2(id,views) VALUES (?,?)";
 
     public static void main(String[] args) {
         File output_file = new File(FILE_NAME);
@@ -40,10 +42,10 @@ public class JDBCExample {
         }
     }
 
-    private static void InsertData(Connection conn, Document doc) throws SQLException {
+    public static void InsertData(Connection conn, Document doc, String query1, String query2) throws SQLException {
         NodeList nList = doc.getElementsByTagName(ITEM);
-        PreparedStatement statement = conn.prepareStatement("insert into rssDB1(id,news,title) VALUES (?,?,?)");
-        PreparedStatement statement2 = conn.prepareStatement("insert into rssDB2(id,views) VALUES (?,?)");
+        PreparedStatement statement = conn.prepareStatement(query1);
+        PreparedStatement statement2 = conn.prepareStatement(query2);
         for (int i = 0; i < nList.getLength(); i++) {
             Node nNode = nList.item(i);
             Element eElement = (Element) nNode;
