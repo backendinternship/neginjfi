@@ -113,10 +113,34 @@ public class TestLogic {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ThreadClass.printNews(1,stmt);
+        ThreadClass.printNews(1, stmt);
         System.setOut(oldOut);
         String output = new String(baos.toByteArray());
         assertTrue(output.contains("TITLE"));
+    }
+
+    @Test
+    public void TestUpdatingData() {
+        Connection conn;
+        Statement stmt = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
+            stmt = conn.createStatement();
+            int view = JDBCExample.printRecord(stmt, 1);
+            JDBCExample.update(stmt, 1, view);
+            ResultSet resultSet = stmt.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + 1);
+            if (resultSet.next()) {
+                int view2 = resultSet.getInt("views");
+                assertEquals(view2, view);
+                System.out.println(view);
+                System.out.println(view2);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -85,7 +85,7 @@ public class JDBCExample {
 
     public static int printRecord(Statement statement, int number) throws SQLException {
         ResultSet resultSet = statement.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + number);
-        while (resultSet.next()) {
+        if (resultSet.next()) {
             int view = resultSet.getInt("views");
             view++;
             System.out.println("VIEWS  " + view);
