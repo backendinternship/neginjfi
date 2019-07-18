@@ -14,8 +14,8 @@ import java.sql.*;
 
 public class TestLogic {
 
-    static final String USER = "root";
-    static final String PASS = "qwer1234";
+    static final String USER = "sa";
+    static final String PASS = "";
     static final int nodeListSize = 30;
 
     @Test
@@ -56,19 +56,17 @@ public class TestLogic {
                 int view = JDBCExample.printRecord(stmt, i);
                 assertEquals(view++, JDBCExample.printRecord(stmt, i));
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Test
     public void insertDataToTableTest() throws ParserConfigurationException, TransformerException, SAXException, IOException {
-        String SQL1 = "create table testTable1 ( " + "   id INT  , news VARCHAR(7000) , title VARCHAR (7000)) ";
-        String SQL2 = "create table testTable2 ( " + "   id INT  , views INT) ";
-        String query1 = "insert into testTable1(id,news,title) VALUES (?,?,?)";
-        String query2 = "insert into testTable2(id,views) VALUES (?,?)";
+        String SQL1 = "create table testTable11 ( " + "   id INT  , news VARCHAR(7000) , title VARCHAR (7000)) ";
+        String SQL2 = "create table testTable22 ( " + "   id INT  , views INT) ";
+        String query1 = "insert into testTable11(id,news,title) VALUES (?,?,?)";
+        String query2 = "insert into testTable22(id,views) VALUES (?,?)";
         File output_file = new File("/Users/Nefario/RSS/src/rss");
         Connection conn;
         Statement stmt;
@@ -76,13 +74,13 @@ public class TestLogic {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
             stmt = conn.createStatement();
-            stmt.executeUpdate(SQL1); // table should be created only once
-            stmt.executeUpdate(SQL2);
+            //stmt.executeUpdate(SQL1); // table should be created only once
+            //stmt.executeUpdate(SQL2);
             Document doc = JDBCExample.getDocument(output_file);
             JDBCExample.InsertData(conn, doc, query1, query2);
             NodeList nList = doc.getElementsByTagName("item");
             for (int i = 0; i < nList.getLength(); i++) {
-                ResultSet resultSet = stmt.executeQuery("SELECT * FROM testTable2 LIMIT 1 OFFSET " + i);
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM testTable22 LIMIT 1 OFFSET " + i);
                 if (resultSet.next()) {
                     int view = resultSet.getInt("views");
                     Node nNode = nList.item(i);
@@ -90,9 +88,7 @@ public class TestLogic {
                     assertEquals(view, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
                 }
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
 
@@ -109,9 +105,7 @@ public class TestLogic {
             Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
             stmt = conn.createStatement();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         for (int i = 0; i < nodeListSize; i++) {
@@ -126,26 +120,22 @@ public class TestLogic {
     @Test
     public void TestUpdatingData() {
         Connection conn;
-        Statement stmt = null;
+        Statement stmt;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("org.h2.Driver");
             conn = DriverManager.getConnection(JDBCExample.DB_URL, USER, PASS);
             stmt = conn.createStatement();
             for (int i = 0; i < nodeListSize; i++) {
                 int view = JDBCExample.printRecord(stmt, i);
                 JDBCExample.update(stmt, i, view);
-                ResultSet resultSet = stmt.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + i);
+                ResultSet resultSet = stmt.executeQuery("SELECT * FROM rss2 LIMIT 1 OFFSET " + i);
                 if (resultSet.next()) {
                     int view2 = resultSet.getInt("views");
                     assertEquals(view2, view);
                 }
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
-
-
 }

@@ -12,29 +12,29 @@ import java.io.IOException;
 import java.sql.*;
 
 public class JDBCExample {
-    static final String DB_URL = "jdbc:mysql://localhost/Rss";
-    static final String USER = "root";
-    static final String PASS = "qwer1234";
-    static final String CLASS_NAME = "com.mysql.jdbc.Driver";
-    static final String SQL1 = "create table rssDB1 ( " + "   id INT  , news VARCHAR(7000) , title VARCHAR (7000)) ";
-    static final String SQL2 = "create table rssDB2 ( " + "   id INT  , views INT) ";
+    static final String JDBC_DRIVER = "org.h2.Driver";
+    static final String DB_URL = "jdbc:h2:~/test";
+    static final String USER = "sa";
+    static final String PASS = "";
     static final String ITEM = "item";
-    static final String FILE_NAME = "/Users/Nefario/RSS/src/rss";
-    static final String query1 = "insert into rssDB1(id,news,title) VALUES (?,?,?)";
-    static final String query2 = "insert into rssDB2(id,views) VALUES (?,?)";
+    static final String SQL1 = "create table rss11 ( " + "   id INT  , news VARCHAR(7000) , title VARCHAR (7000)) ";
+    static final String SQL2 = "create table rss22 ( " + "   id INT  , views INT) ";
+    static final String FILE_NAME = "/Users/Nefario/neginjfi/out/rss";
+    static final String query1 = "insert into rss11(id,news,title) VALUES (?,?,?)";
+    static final String query2 = "insert into rss22(id,views) VALUES (?,?)";
 
     public static void main(String[] args) {
         File output_file = new File(FILE_NAME);
         Connection conn;
         Statement stmt;
         try {
-            Class.forName(CLASS_NAME);
+            Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
             stmt = conn.createStatement();
-            //stmt.executeUpdate(SQL1); // table should be created only once
-            //stmt.executeUpdate(SQL2);
+            // stmt.executeUpdate(SQL1); // table should be created only once
+            // stmt.executeUpdate(SQL2);
             Document doc = getDocument(output_file);
-            // InsertData(conn, doc);
+            //InsertData(conn, doc, query1, query2);
             ThreadClass threadClass = new ThreadClass(stmt);
             threadClass.start();
         } catch (Exception se) {
@@ -79,13 +79,13 @@ public class JDBCExample {
     }
 
     public static void update(Statement stmt, int number, int view) throws SQLException {
-        String query1 = "update rssDB2 set views=" + (view) + " " + "where id in(" + number + ")";
+        String query1 = "UPDATE rss22 SET views=" + (view) + " " + "WHERE id = (" + number + ")";
         stmt.executeUpdate(query1);
     }
 
     public static int printRecord(Statement statement, int number) throws SQLException {
-        ResultSet resultSet = statement.executeQuery("SELECT * FROM rssDB2 LIMIT 1 OFFSET " + number);
-        if (resultSet.next()) {
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM rss22 ORDER by id LIMIT 1 OFFSET " + number);
+        while (resultSet.next()) {
             int view = resultSet.getInt("views");
             view++;
             System.out.println("VIEWS  " + view);
