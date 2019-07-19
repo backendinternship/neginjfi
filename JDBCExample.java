@@ -22,8 +22,10 @@ public class JDBCExample {
     static final String FILE_NAME = "/Users/Nefario/neginjfi/out/rss";
     static final String query1 = "insert into rss11(id,news,title) VALUES (?,?,?)";
     static final String query2 = "insert into rss22(id,views) VALUES (?,?)";
+    public static NodeList nList2;
+    private transient static JDBCExample jd = new JDBCExample();
 
-    public static void main(String[] args) {
+    public void main(String[] args) {
         File output_file = new File(FILE_NAME);
         Connection conn;
         Statement stmt;
@@ -35,14 +37,15 @@ public class JDBCExample {
             // stmt.executeUpdate(SQL2);
             Document doc = getDocument(output_file);
             //InsertData(conn, doc, query1, query2);
-            ThreadClass threadClass = new ThreadClass(stmt);
+            ThreadClass threadClass = new ThreadClass(stmt , jd);
             threadClass.start();
+            System.out.println("thread cla");
         } catch (Exception se) {
             se.printStackTrace();
         }
     }
 
-    public static void InsertData(Connection conn, Document doc, String query1, String query2) throws SQLException {
+    public  void InsertData(Connection conn, Document doc, String query1, String query2) throws SQLException {
         NodeList nList = doc.getElementsByTagName(ITEM);
         PreparedStatement statement = conn.prepareStatement(query1);
         PreparedStatement statement2 = conn.prepareStatement(query2);
@@ -59,12 +62,12 @@ public class JDBCExample {
         }
     }
 
-    public static Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+    public  Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(output_file);
         doc.getDocumentElement().normalize();
-        NodeList nList2 = doc.getElementsByTagName("comments");
+        nList2 = doc.getElementsByTagName("comments");
         for (int i = 0; i < nList2.getLength(); i++) {
             Text a = doc.createTextNode("0");
             Element p = doc.createElement("newNode");
@@ -78,12 +81,19 @@ public class JDBCExample {
         return doc;
     }
 
-    public static void update(Statement stmt, int number, int view) throws SQLException {
+    public boolean update(Statement stmt, int number, int view) throws SQLException {
+        System.out.println("fuck me");
         String query1 = "UPDATE rss22 SET views=" + (view) + " " + "WHERE id = (" + number + ")";
         stmt.executeUpdate(query1);
+        return true;
     }
 
-    public static int printRecord(Statement statement, int number) throws SQLException {
+
+    public static JDBCExample getInstance() {
+        return jd;
+    }
+
+    public int printRecord(Statement statement, int number) throws SQLException {
         ResultSet resultSet = statement.executeQuery("SELECT * FROM rss22 ORDER by id LIMIT 1 OFFSET " + number);
         while (resultSet.next()) {
             int view = resultSet.getInt("views");
@@ -92,5 +102,15 @@ public class JDBCExample {
             return view;
         }
         return 0;
+    }
+
+    public boolean printNews(int number, Statement statement) throws SQLException {
+        ResultSet rs = statement.executeQuery("SELECT * FROM rss11 LIMIT 1 OFFSET " + number);
+        if (rs.next()) {
+            System.out.println("TITLE :  " + rs.getString("title"));
+            System.out.println("NEWS  :  " + rs.getString("news"));
+            return true;
+        }
+        return false;
     }
 }

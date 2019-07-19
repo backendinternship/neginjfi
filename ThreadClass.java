@@ -5,36 +5,30 @@ import java.util.Scanner;
 
 public class ThreadClass extends Thread {
     Statement statement;
+    JDBCExample jdbcExample;
 
-    public ThreadClass(Statement stmt) {
+    public ThreadClass(Statement stmt, JDBCExample jdbcExample) {
         this.statement = stmt;
+        this.jdbcExample = jdbcExample;
     }
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
+        //Scanner scanner = new Scanner(System.in);
+        /*while (true) {
             String s = scanner.nextLine();
-            if (s.matches("^[0-9]+")) {
-                try {
-                    int number = Integer.parseInt(s);
-                    printNews(number, statement);
-                    int vi = JDBCExample.printRecord(statement, number);
-                    JDBCExample.update(statement, number, vi);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            if (s.matches("^[0-9]+")) {*/
+        try {
+            jdbcExample.printNews(0, statement);
+            int vi = jdbcExample.printRecord(statement,0);
+            jdbcExample.update(statement, 0, vi);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        /*    }
+        }*/
     }
 
-    public static void printNews(int number, Statement statement) throws SQLException {
-        ResultSet rs = statement.executeQuery("SELECT * FROM rss11 LIMIT 1 OFFSET " + number);
-        if (rs.next()) {
-            System.out.println("TITLE :  " + rs.getString("title"));
-            System.out.println("NEWS  :  " + rs.getString("news"));
-        }
-    }
 
 
 }
