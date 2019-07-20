@@ -1,6 +1,9 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.sql.*;
 import java.util.Scanner;
 
 public class ThreadClass extends Thread {
@@ -28,7 +31,6 @@ public class ThreadClass extends Thread {
         /*    }
         }*/
     }
-
 
 
 }

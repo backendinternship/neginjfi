@@ -24,8 +24,10 @@ public class JDBCExample {
     static final String query2 = "insert into rss22(id,views) VALUES (?,?)";
     public static NodeList nList2;
     private transient static JDBCExample jd = new JDBCExample();
+    private DataInsertion dataInsertion = DataInsertion.getInstance();
 
     public void main(String[] args) {
+        System.out.println("man neginam");
         File output_file = new File(FILE_NAME);
         Connection conn;
         Statement stmt;
@@ -36,33 +38,16 @@ public class JDBCExample {
             // stmt.executeUpdate(SQL1); // table should be created only once
             // stmt.executeUpdate(SQL2);
             Document doc = getDocument(output_file);
-            //InsertData(conn, doc, query1, query2);
-            ThreadClass threadClass = new ThreadClass(stmt , jd);
+            dataInsertion.InsertData(null, null, null, null);
+            ThreadClass threadClass = new ThreadClass(stmt, jd);
             threadClass.start();
-            System.out.println("thread cla");
         } catch (Exception se) {
             se.printStackTrace();
         }
     }
 
-    public  void InsertData(Connection conn, Document doc, String query1, String query2) throws SQLException {
-        NodeList nList = doc.getElementsByTagName(ITEM);
-        PreparedStatement statement = conn.prepareStatement(query1);
-        PreparedStatement statement2 = conn.prepareStatement(query2);
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node nNode = nList.item(i);
-            Element eElement = (Element) nNode;
-            statement.setInt(1, i);
-            statement2.setInt(1, i);
-            statement.setString(2, eElement.getElementsByTagName("description").item(0).getTextContent());
-            statement.setString(3, eElement.getElementsByTagName("title").item(0).getTextContent());
-            statement2.setInt(2, Integer.parseInt(eElement.getElementsByTagName("newNode").item(0).getTextContent()));
-            statement.execute();
-            statement2.execute();
-        }
-    }
 
-    public  Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+    public Document getDocument(File output_file) throws ParserConfigurationException, SAXException, IOException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(output_file);
@@ -82,7 +67,6 @@ public class JDBCExample {
     }
 
     public boolean update(Statement stmt, int number, int view) throws SQLException {
-        System.out.println("fuck me");
         String query1 = "UPDATE rss22 SET views=" + (view) + " " + "WHERE id = (" + number + ")";
         stmt.executeUpdate(query1);
         return true;
